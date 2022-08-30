@@ -175,14 +175,30 @@ function mark ()
         tmpfile=`echo ${TEMP:-${TMPDIR:-/tmp}} | sed -e "s/\\/$//"`
         tmpfile=$tmpfile/cdargs.$USER.$$.$RANDOM
 
-        cdargs_file=$(readlink -f "${HOME}/.cdargs")
+        if [[ "$(uname)" == "Darwin" ]]
+        then
+            # Unfortunately, the BSD based Mac OS's version of readlink
+            # doesn't provide the functionality we need here. so we
+            # use the gnu version, called greadlink
+            cdargs_file=$(greadlink -f "${HOME}/.cdargs")
+        else
+            cdargs_file=$(readlink -f "${HOME}/.cdargs")
+        fi
         grep -v "^$1 " "$HOME/.cdargs" > $tmpfile && 'mv' -f $tmpfile "${cdargs_file}";
     fi
     # add the alias to the list of bookmarks
     cdargs --add=":$1:`pwd`";
     # sort the resulting list
     if [ "$CDARGS_SORT" ]; then
-        cdargs_file=$(readlink -f "${HOME}/.cdargs")
+        if [[ "$(uname)" == "Darwin" ]]
+        then
+            # Unfortunately, the BSD based Mac OS's version of readlink
+            # doesn't provide the functionality we need here. so we
+            # use the gnu version, called greadlink
+            cdargs_file=$(greadlink -f "${HOME}/.cdargs")
+        else
+            cdargs_file=$(readlink -f "${HOME}/.cdargs")
+        fi
         sort -o "${cdargs_file}" "$HOME/.cdargs";
     fi
 }
