@@ -993,11 +993,28 @@ string canonify_filename(string filename) {
         filename.replace(pos,2,"/");
     }
 
+    string filepath;
+
     if (filename[0] != '~') {
-        return filename;
+        filepath = filename;
     }
+    else {
     // resolve home directory
-    return string(getenv("HOME")) + filename.substr(1);
+        filepath = string(getenv("HOME")) + filename.substr(1);
+    }
+
+    // if we're pointing to a symbolic link, find the actual file
+    // that the link is pointing to. This makes it easier to
+    // create a symbolic link on a network drive and share bookmarks
+    // between different machines.
+    const char *resolved_path = realpath(filepath.c_str(), NULL);
+    if (resolved_path) {
+        filepath = string(resolved_path);
+        free((void *) resolved_path);
+        return filepath;
+    }
+
+    return filepath;
 }
 
 void version(void) {
