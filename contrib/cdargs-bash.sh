@@ -276,8 +276,8 @@ function _cdargs_aliases ()
 # --------------------------------------------- #
 _cdargs_complete() {
   local nospace=
-  [ "${BASH_VERSINFO[0]}" -ge 3 -o \( "${BASH_VERSINFO[0]}" = 2 -a \( "${BASH_VERSINFO[1]}" = 05a -o "${BASH_VERSINFO[1]}" = 05b \) \) ] && nospace='-o nospace'
-  complete $nospace -S / -X '*/' -F _cdargs_aliases cv cb cdb
+  [ "${BASH_VERSINFO[0]}" -ge 3 -o \( "${BASH_VERSINFO[0]}" = 2 -a \( "${BASH_VERSINFO[1]}" = 05a -o "${BASH_VERSINFO[1]}" = 05b \) \) ] && nospace=('-o nospace')
+  complete "$@{nospace}" -S / -X '*/' -F _cdargs_aliases cv cb cdb
 }
 
 _cdargs_complete
